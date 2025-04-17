@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简历生成系统 - 主界面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background-color: #FAFAFA;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background-color: #3366CC;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 50px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .system-title {
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .logout-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .content-area {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 20px;
+        }
+        
+        .resume-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .resume-card {
+            border: 1px solid #E6E6E6;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: white;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .resume-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .resume-thumbnail {
+            height: 160px;
+            background-color: #F2F7FF;
+        }
+        
+        .resume-info {
+            padding: 15px;
+        }
+        
+        .resume-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 5px;
+        }
+        
+        .resume-date {
+            font-size: 12px;
+            color: #808080;
+            margin-bottom: 15px;
+        }
+        
+        .resume-actions {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px;
+            border-top: 1px solid #E6E6E6;
+            background-color: #FAFAFA;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            font-size: 14px;
+            color: #3366CC;
+            cursor: pointer;
+        }
+        
+        .delete-btn {
+            color: #CC3333;
+        }
+        
+        .new-resume-card {
+            border: 1px solid #E6E6E6;
+            border-radius: 8px;
+            background-color: #FAFAFA;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 280px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .new-resume-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .new-resume-icon {
+            font-size: 40px;
+            color: #808080;
+            margin-bottom: 10px;
+        }
+        
+        .new-resume-text {
+            font-size: 16px;
+            color: #666666;
+        }
+        
+        .add-icon {
+            position: fixed;
+            right: 30px;
+            bottom: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #3366CC;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 100;
+        }
+        
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 400px;
+            padding: 20px;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333333;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #333333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .cancel-btn {
+            background-color: #F2F2F2;
+            border: 1px solid #CCCCCC;
+            color: #666666;
+        }
+        
+        .confirm-btn {
+            background-color: #3366CC;
+            border: none;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="system-title">简历生成系统</div>
+        <button class="logout-btn">退出登录</button>
+    </div>
+    
+    <div class="content-area">
+        <h1 class="section-title">我的简历</h1>
+        
+        <div class="resume-grid">
+            <div class="resume-card">
+                <div class="resume-thumbnail"></div>
+                <div class="resume-info">
+                    <div class="resume-title">张三的自招简历</div>
+                    <div class="resume-date">最后修改: 2023-04-16</div>
+                </div>
+                <div class="resume-actions">
+                    <button class="action-btn preview-btn">预览</button>
+                    <button class="action-btn edit-btn">编辑</button>
+                    <button class="action-btn export-btn">导出</button>
+                    <button class="action-btn delete-btn">删除</button>
+                </div>
+            </div>
+            
+            <div class="new-resume-card" id="newResumeCard">
+                <div class="new-resume-icon">+</div>
+                <div class="new-resume-text">新建自招简历</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="add-icon" id="addIcon">+</div>
+    
+    <!-- 新建简历弹窗 -->
+    <div class="modal" id="newResumeModal">
+        <div class="modal-content">
+            <div class="modal-title">新建自招简历</div>
+            <div class="form-group">
+                <label for="resumeName">简历名称</label>
+                <input type="text" id="resumeName" placeholder="请输入简历名称">
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel-btn" id="cancelBtn">取消</button>
+                <button class="modal-btn confirm-btn" id="confirmBtn">确认</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 删除确认弹窗 -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-title">确认删除</div>
+            <p>确定要删除这份简历吗？此操作不可撤销。</p>
+            <div class="modal-actions">
+                <button class="modal-btn cancel-btn" id="cancelDeleteBtn">取消</button>
+                <button class="modal-btn confirm-btn" id="confirmDeleteBtn">确认删除</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 获取DOM元素
+        const newResumeCard = document.getElementById('newResumeCard');
+        const addIcon = document.getElementById('addIcon');
+        const newResumeModal = document.getElementById('newResumeModal');
+        const deleteModal = document.getElementById('deleteModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const resumeNameInput = document.getElementById('resumeName');
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const logoutBtn = document.querySelector('.logout-btn');
+        
+        // 打开新建简历弹窗
+        function openNewResumeModal() {
+            newResumeModal.style.display = 'flex';
+            resumeNameInput.focus();
+        }
+        
+        // 关闭新建简历弹窗
+        function closeNewResumeModal() {
+            newResumeModal.style.display = 'none';
+            resumeNameInput.value = '';
+        }
+        
+        // 打开删除确认弹窗
+        function openDeleteModal() {
+            deleteModal.style.display = 'flex';
+        }
+        
+        // 关闭删除确认弹窗
+        function closeDeleteModal() {
+            deleteModal.style.display = 'none';
+        }
+        
+        // 创建新简历
+        function createNewResume() {
+            const resumeName = resumeNameInput.value.trim();
+            if (!resumeName) {
+                alert('请输入简历名称');
+                return;
+            }
+            
+            // 创建新简历卡片
+            const resumeGrid = document.querySelector('.resume-grid');
+            const newCard = document.createElement('div');
+            newCard.className = 'resume-card';
+            
+            const currentDate = new Date();
+            const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+            
+            newCard.innerHTML = `
+                <div class="resume-thumbnail"></div>
+                <div class="resume-info">
+                    <div class="resume-title">${resumeName}</div>
+                    <div class="resume-date">最后修改: ${formattedDate}</div>
+                </div>
+                <div class="resume-actions">
+                    <button class="action-btn preview-btn">预览</button>
+                    <button class="action-btn edit-btn">编辑</button>
+                    <button class="action-btn export-btn">导出</button>
+                    <button class="action-btn delete-btn">删除</button>
+                </div>
+            `;
+            
+            // 在新建卡片前插入
+            resumeGrid.insertBefore(newCard, newResumeCard);
+            
+            // 为新卡片的删除按钮添加事件监听
+            const newDeleteBtn = newCard.querySelector('.delete-btn');
+            newDeleteBtn.addEventListener('click', openDeleteModal);
+            
+            // 关闭弹窗
+            closeNewResumeModal();
+            
+            // 提示创建成功
+            alert('简历创建成功！');
+        }
+        
+        // 删除简历
+        function deleteResume() {
+            // 这里应该有逻辑来确定要删除哪个简历
+            // 简单起见，我们假设删除的是当前点击删除按钮的简历卡片
+            const resumeCard = document.querySelector('.resume-card');
+            if (resumeCard) {
+                resumeCard.remove();
+            }
+            
+            closeDeleteModal();
+        }
+        
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                // 跳转到登录页面
+                window.location.href = 'login.html';
+            }
+        }
+        
+        // 添加事件监听
+        newResumeCard.addEventListener('click', openNewResumeModal);
+        addIcon.addEventListener('click', openNewResumeModal);
+        cancelBtn.addEventListener('click', closeNewResumeModal);
+        confirmBtn.addEventListener('click', createNewResume);
+        cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+        confirmDeleteBtn.addEventListener('click', deleteResume);
+        logoutBtn.addEventListener('click', logout);
+        
+        // 为所有删除按钮添加事件监听
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', openDeleteModal);
+        });
+        
+        // 点击弹窗外部关闭弹窗
+        window.addEventListener('click', (event) => {
+            if (event.target === newResumeModal) {
+                closeNewResumeModal();
+            }
+            if (event.target === deleteModal) {
+                closeDeleteModal();
+            }
+        });
+        
+        // 按ESC键关闭弹窗
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeNewResumeModal();
+                closeDeleteModal();
+            }
+        });
+    </script>
+</body>
+</html>
